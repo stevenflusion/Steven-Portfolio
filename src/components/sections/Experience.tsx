@@ -6,13 +6,27 @@ import {
 
 import "react-vertical-timeline-component/style.min.css";
 
-import { experiences } from "../../constants";
 import { SectionWrapper } from "../../hoc";
 import { Header } from "../atoms/Header";
-import { TExperience } from "../../types";
 import { useLanguage } from "../../context/LanguageContext";
 
-const ExperienceCard: React.FC<TExperience> = (experience) => {
+interface ExperiencePoint {
+  en: string;
+  es: string;
+}
+
+interface ExperienceData {
+  title: string;
+  companyName: string;
+  icon: string;
+  iconBg: string;
+  date: string;
+  points: ExperiencePoint[];
+}
+
+const ExperienceCard: React.FC<ExperienceData> = (experience) => {
+  const { language } = useLanguage();
+
   return (
     <VerticalTimelineElement
       contentStyle={{
@@ -48,7 +62,7 @@ const ExperienceCard: React.FC<TExperience> = (experience) => {
             key={`experience-point-${index}`}
             className="text-white-100 pl-1 text-[14px] tracking-wider"
           >
-            {point}
+            {language === "es" ? point.es : point.en}
           </li>
         ))}
       </ul>
@@ -65,7 +79,7 @@ const Experience = () => {
 
       <div className="mt-20 flex flex-col">
         <VerticalTimeline>
-          {experiences.map((experience, index) => (
+          {t.experiences.map((experience, index) => (
             <ExperienceCard key={index} {...experience} />
           ))}
         </VerticalTimeline>

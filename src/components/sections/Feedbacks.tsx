@@ -2,12 +2,18 @@ import { motion } from "framer-motion";
 
 import { styles } from "../../constants/styles";
 import { fadeIn } from "../../utils/motion";
-import { testimonials } from "../../constants";
 import { Header } from "../atoms/Header";
-import { TTestimonial } from "../../types";
 import { useLanguage } from "../../context/LanguageContext";
 
-const FeedbackCard: React.FC<{ index: number } & TTestimonial> = ({
+interface TestimonialData {
+  testimonial: string;
+  name: string;
+  designation: string;
+  company: string;
+  image: string;
+}
+
+const FeedbackCard: React.FC<{ index: number } & TestimonialData> = ({
   index,
   testimonial,
   name,
@@ -30,7 +36,7 @@ const FeedbackCard: React.FC<{ index: number } & TTestimonial> = ({
             <span className="blue-text-gradient">@</span> {name}
           </p>
           <p className="text-secondary mt-1 text-[12px]">
-            {designation} of {company}
+            {designation} {company}
           </p>
         </div>
 
@@ -57,7 +63,7 @@ const Feedbacks = () => {
       <div
         className={`${styles.paddingX} -mt-20 flex flex-wrap gap-7 pb-14 max-sm:justify-center`}
       >
-        {testimonials.map((testimonial, index) => (
+        {t.testimonials.map((testimonial, index) => (
           <FeedbackCard key={testimonial.name} index={index} {...testimonial} />
         ))}
       </div>
