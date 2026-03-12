@@ -7,11 +7,12 @@ import { slideIn } from "../../utils/motion";
 import { Header } from "../atoms/Header";
 import { useLanguage } from "../../context/LanguageContext";
 
-const WHATSAPP_NUMBER = "593968948715";
+const ACCESS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
 
 const Contact = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -20,18 +21,54 @@ const Contact = () => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
-    const { name, email, message } = form;
-    const whatsappMessage = `*Nuevo mensaje de:* ${name}%0A*Email:* ${email}%0A%0A*Mensaje:* ${message}`;
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
+    const formData = new FormData();
+    formData.append("access_key", ACCESS_KEY);
+    formData.append("name", form.name);
+    formData.append("email", form.email);
+    formData.append("message", form.message);
+    formData.append(
+      "subject",
+      language === "en"
+        ? "New contact from portfolio"
+        : "Nuevo contacto desde portafolio",
+    );
+    formData.append("from_name", "Steven Portfolio");
 
-    window.open(whatsappUrl, "_blank");
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
 
-    alert(t.language === "en" ? "Opening WhatsApp..." : "Abriendo WhatsApp...");
+      const result = await response.json();
 
-    setForm({ name: "", email: "", message: "" });
+      if (result.success) {
+        alert(
+          language === "en"
+            ? "Message sent successfully!"
+            : "¡Mensaje enviado exitosamente!",
+        );
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        alert(
+          language === "en"
+            ? "Something went wrong. Please try again."
+            : "Algo salió mal. Por favor intenta de nuevo.",
+        );
+      }
+    } catch (error) {
+      alert(
+        language === "en"
+          ? "Something went wrong. Please try again."
+          : "Algo salió mal. Por favor intenta de nuevo.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,9 +126,16 @@ const Contact = () => {
           </label>
           <button
             type="submit"
-            className="bg-tertiary shadow-primary w-fit rounded-xl px-8 py-3 font-bold text-white shadow-md outline-none"
+            disabled={loading}
+            className="bg-tertiary shadow-primary w-fit rounded-xl px-8 py-3 font-bold text-white shadow-md outline-none disabled:opacity-50"
           >
-            {t.language === "en" ? "Send via WhatsApp" : "Enviar por WhatsApp"}
+            {loading
+              ? language === "en"
+                ? "Sending..."
+                : "Enviando..."
+              : language === "en"
+                ? "Send"
+                : "Enviar"}
           </button>
         </form>
       </motion.div>
