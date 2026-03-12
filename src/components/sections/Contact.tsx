@@ -7,10 +7,7 @@ import { SectionWrapper } from "../../hoc";
 import { slideIn } from "../../utils/motion";
 import { config } from "../../constants/config";
 import { Header } from "../atoms/Header";
-
-const INITIAL_STATE = Object.fromEntries(
-  Object.keys(config.contact.form).map((input) => [input, ""])
-);
+import { useLanguage } from "../../context/LanguageContext";
 
 const emailjsConfig = {
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -19,12 +16,13 @@ const emailjsConfig = {
 };
 
 const Contact = () => {
+  const { t } = useLanguage();
   const formRef = useRef<React.LegacyRef<HTMLFormElement> | undefined>();
-  const [form, setForm] = useState(INITIAL_STATE);
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | undefined,
   ) => {
     if (e === undefined) return;
     const { name, value } = e.target;
@@ -47,21 +45,27 @@ const Contact = () => {
           to_email: config.html.email,
           message: form.message,
         },
-        emailjsConfig.accessToken
+        emailjsConfig.accessToken,
       )
       .then(
         () => {
           setLoading(false);
-          alert("Thank you. I will get back to you as soon as possible.");
+          alert(
+            t.language === "en"
+              ? "Thank you. I will get back to you as soon as possible."
+              : "Gracias. Te contactaré lo antes posible.",
+          );
 
-          setForm(INITIAL_STATE);
+          setForm({ name: "", email: "", message: "" });
         },
         (error) => {
           setLoading(false);
 
           console.log(error);
-          alert("Something went wrong.");
-        }
+          alert(
+            t.language === "en" ? "Something went wrong." : "Algo salió mal.",
+          );
+        },
       );
   };
 
@@ -73,7 +77,7 @@ const Contact = () => {
         variants={slideIn("left", "tween", 0.2, 1)}
         className="bg-black-100 flex-[0.75] rounded-2xl p-8"
       >
-        <Header useMotion={false} {...config.contact} />
+        <Header useMotion={false} p={t.contact.p} h2={t.contact.h2} />
 
         <form
           // @ts-expect-error
@@ -81,31 +85,56 @@ const Contact = () => {
           onSubmit={handleSubmit}
           className="mt-12 flex flex-col gap-8"
         >
-          {Object.keys(config.contact.form).map((input) => {
-            const { span, placeholder } =
-              config.contact.form[input as keyof typeof config.contact.form];
-            const Component = input === "message" ? "textarea" : "input";
-
-            return (
-              <label key={input} className="flex flex-col">
-                <span className="mb-4 font-medium text-white">{span}</span>
-                <Component
-                  type={input === "email" ? "email" : "text"}
-                  name={input}
-                  value={form[`${input}`]}
-                  onChange={handleChange}
-                  placeholder={placeholder}
-                  className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
-                  {...(input === "message" && { rows: 7 })}
-                />
-              </label>
-            );
-          })}
+          <label className="flex flex-col">
+            <span className="mb-4 font-medium text-white">
+              {t.contact.form.name.span}
+            </span>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder={t.contact.form.name.placeholder}
+              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
+            />
+          </label>
+          <label className="flex flex-col">
+            <span className="mb-4 font-medium text-white">
+              {t.contact.form.email.span}
+            </span>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder={t.contact.form.email.placeholder}
+              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
+            />
+          </label>
+          <label className="flex flex-col">
+            <span className="mb-4 font-medium text-white">
+              {t.contact.form.message.span}
+            </span>
+            <textarea
+              name="message"
+              value={form.message}
+              onChange={handleChange}
+              placeholder={t.contact.form.message.placeholder}
+              rows={7}
+              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
+            />
+          </label>
           <button
             type="submit"
             className="bg-tertiary shadow-primary w-fit rounded-xl px-8 py-3 font-bold text-white shadow-md outline-none"
           >
-            {loading ? "Sending..." : "Send"}
+            {loading
+              ? t.language === "en"
+                ? "Sending..."
+                : "Enviando..."
+              : t.language === "en"
+                ? "Send"
+                : "Enviar"}
           </button>
         </form>
       </motion.div>

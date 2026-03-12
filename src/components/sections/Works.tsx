@@ -5,7 +5,7 @@ import { github } from "../../assets";
 import { SectionWrapper } from "../../hoc";
 import { projects } from "../../constants";
 import { fadeIn } from "../../utils/motion";
-import { config } from "../../constants/config";
+import { useLanguage } from "../../context/LanguageContext";
 import { Header } from "../atoms/Header";
 import { TProject } from "../../types";
 
@@ -64,16 +64,18 @@ const ProjectCard: React.FC<{ index: number } & TProject> = ({
 };
 
 const Works = () => {
+  const { t } = useLanguage();
+
   return (
     <>
-      <Header useMotion={true} {...config.sections.works} />
+      <Header useMotion={true} p={t.works.p} h2={t.works.h2} />
 
       <div className="flex w-full">
         <motion.p
           variants={fadeIn("", "", 0.1, 1)}
           className="text-secondary mt-3 max-w-3xl text-[17px] leading-[30px]"
         >
-          {config.sections.works.content}
+          {t.works.content}
         </motion.p>
       </div>
 

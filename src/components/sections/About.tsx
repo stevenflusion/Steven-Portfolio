@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { services } from "../../constants";
 import { SectionWrapper } from "../../hoc";
 import { fadeIn } from "../../utils/motion";
-import { config } from "../../constants/config";
+import { useLanguage } from "../../context/LanguageContext";
 import { Header } from "../atoms/Header";
 
 interface IServiceCard {
@@ -44,15 +44,17 @@ const ServiceCard: React.FC<IServiceCard> = ({ index, title, icon }) => (
 );
 
 const About = () => {
+  const { t } = useLanguage();
+
   return (
     <>
-      <Header useMotion={true} {...config.sections.about} />
+      <Header useMotion={true} p={t.about.p} h2={t.about.h2} />
 
       <motion.p
         variants={fadeIn("", "", 0.1, 1)}
         className="text-secondary mt-4 max-w-3xl text-[17px] leading-[30px]"
       >
-        {config.sections.about.content}
+        {t.about.content}
       </motion.p>
 
       <div className="mt-20 flex flex-wrap gap-10 max-sm:justify-center">

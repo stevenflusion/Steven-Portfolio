@@ -10,7 +10,7 @@ import { experiences } from "../../constants";
 import { SectionWrapper } from "../../hoc";
 import { Header } from "../atoms/Header";
 import { TExperience } from "../../types";
-import { config } from "../../constants/config";
+import { useLanguage } from "../../context/LanguageContext";
 
 const ExperienceCard: React.FC<TExperience> = (experience) => {
   return (
@@ -57,9 +57,11 @@ const ExperienceCard: React.FC<TExperience> = (experience) => {
 };
 
 const Experience = () => {
+  const { t } = useLanguage();
+
   return (
     <>
-      <Header useMotion={true} {...config.sections.experience} />
+      <Header useMotion={true} p={t.experience.p} h2={t.experience.h2} />
 
       <div className="mt-20 flex flex-col">
         <VerticalTimeline>

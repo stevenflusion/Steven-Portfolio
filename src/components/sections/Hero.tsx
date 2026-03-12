@@ -3,8 +3,11 @@ import { motion } from "framer-motion";
 import { styles } from "../../constants/styles";
 import { ComputersCanvas } from "../canvas";
 import { config } from "../../constants/config";
+import { useLanguage } from "../../context/LanguageContext";
 
 const Hero = () => {
+  const { t } = useLanguage();
+
   return (
     <section className={`relative mx-auto h-screen w-full`}>
       <div
@@ -17,11 +20,11 @@ const Hero = () => {
 
         <div>
           <h1 className={`${styles.heroHeadText} text-white`}>
-            Hi, I'm <span className="text-[#915EFF]">{config.hero.name}</span>
+            {t.hero.subtitle}{" "}
+            <span className="text-[#915EFF]">{config.hero.name}</span>
           </h1>
           <p className={`${styles.heroSubText} text-white-100 mt-2`}>
-            {config.hero.p[0]} <br className="hidden sm:block" />
-            {config.hero.p[1]}
+            {t.hero.description[0]} <br className="hidden sm:block" />
           </p>
         </div>
       </div>

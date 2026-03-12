@@ -5,7 +5,7 @@ import { fadeIn } from "../../utils/motion";
 import { testimonials } from "../../constants";
 import { Header } from "../atoms/Header";
 import { TTestimonial } from "../../types";
-import { config } from "../../constants/config";
+import { useLanguage } from "../../context/LanguageContext";
 
 const FeedbackCard: React.FC<{ index: number } & TTestimonial> = ({
   index,
@@ -45,12 +45,14 @@ const FeedbackCard: React.FC<{ index: number } & TTestimonial> = ({
 );
 
 const Feedbacks = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-black-100 mt-12 rounded-[20px]">
       <div
         className={`${styles.padding} bg-tertiary min-h-[300px] rounded-2xl`}
       >
-        <Header useMotion={true} {...config.sections.feedbacks} />
+        <Header useMotion={true} p={t.feedbacks.p} h2={t.feedbacks.h2} />
       </div>
       <div
         className={`${styles.paddingX} -mt-20 flex flex-wrap gap-7 pb-14 max-sm:justify-center`}
