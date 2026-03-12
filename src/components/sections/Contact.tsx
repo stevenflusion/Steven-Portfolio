@@ -1,13 +1,13 @@
-import React, { useState } from "react";
 import { motion } from "framer-motion";
+import React, { useState } from "react";
 
-import { EarthCanvas } from "../canvas";
+import { useLanguage } from "../../context/LanguageContext";
 import { SectionWrapper } from "../../hoc";
 import { slideIn } from "../../utils/motion";
 import { Header } from "../atoms/Header";
-import { useLanguage } from "../../context/LanguageContext";
+import { EarthCanvas } from "../canvas";
 
-const ACCESS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
+const ACCESS_KEY = "ae621c74-bd89-4aab-83d3-69dc39a166ce";
 
 const Contact = () => {
   const { t, language } = useLanguage();
