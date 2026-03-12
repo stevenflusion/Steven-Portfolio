@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
 
 import { useLanguage } from "../../context/LanguageContext";
@@ -13,6 +13,7 @@ const Contact = () => {
   const { t, language } = useLanguage();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -47,25 +48,12 @@ const Contact = () => {
       const result = await response.json();
 
       if (result.success) {
-        alert(
-          language === "en"
-            ? "Message sent successfully!"
-            : "¡Mensaje enviado exitosamente!",
-        );
+        setShowSuccess(true);
         setForm({ name: "", email: "", message: "" });
-      } else {
-        alert(
-          language === "en"
-            ? "Something went wrong. Please try again."
-            : "Algo salió mal. Por favor intenta de nuevo.",
-        );
+        setTimeout(() => setShowSuccess(false), 5000);
       }
     } catch (error) {
-      alert(
-        language === "en"
-          ? "Something went wrong. Please try again."
-          : "Algo salió mal. Por favor intenta de nuevo.",
-      );
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -77,8 +65,38 @@ const Contact = () => {
     >
       <motion.div
         variants={slideIn("left", "tween", 0.2, 1)}
-        className="bg-black-100 flex-[0.75] rounded-2xl p-8"
+        className="bg-black-100 flex-[0.75] rounded-2xl p-8 relative"
       >
+        <AnimatePresence>
+          {showSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-4 right-4 z-10 bg-green-500/20 border border-green-500/50 rounded-lg px-4 py-3 flex items-center gap-3"
+            >
+              <div className="bg-green-500 rounded-full p-1">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <span className="text-green-400 text-sm font-medium">
+                {language === "en" ? "Message sent!" : "¡Mensaje enviado!"}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <Header useMotion={false} p={t.contact.p} h2={t.contact.h2} />
 
         <form onSubmit={handleSubmit} className="mt-12 flex flex-col gap-8">
@@ -127,8 +145,26 @@ const Contact = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-tertiary shadow-primary w-fit rounded-xl px-8 py-3 font-bold text-white shadow-md outline-none disabled:opacity-50"
+            className="bg-tertiary shadow-primary w-fit rounded-xl px-8 py-3 font-bold text-white shadow-md outline-none disabled:opacity-50 flex items-center gap-2"
           >
+            {loading && (
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+            )}
             {loading
               ? language === "en"
                 ? "Sending..."
