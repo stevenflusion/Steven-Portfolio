@@ -1,11 +1,17 @@
 import { motion } from "framer-motion";
+import { lazy, Suspense } from "react";
 
 import { styles } from "../../constants/styles";
-import { ComputersCanvas } from "../canvas";
 import { config } from "../../constants/config";
 import { useLanguage } from "../../context/LanguageContext";
 
-const Hero = () => {
+const ComputersCanvas = lazy(() => import("../canvas/Computers"));
+
+interface HeroProps {
+  isMobile: boolean;
+}
+
+const Hero = ({ isMobile }: HeroProps) => {
   const { t } = useLanguage();
 
   return (
@@ -29,7 +35,11 @@ const Hero = () => {
         </div>
       </div>
 
-      <ComputersCanvas />
+      {!isMobile && (
+        <Suspense fallback={null}>
+          <ComputersCanvas />
+        </Suspense>
+      )}
 
       <div className="xs:bottom-10 absolute bottom-32 flex w-full items-center justify-center">
         <a href="#about">

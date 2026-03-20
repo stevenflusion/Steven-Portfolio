@@ -1,15 +1,20 @@
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 
 import { useLanguage } from "../../context/LanguageContext";
 import { SectionWrapper } from "../../hoc";
 import { slideIn } from "../../utils/motion";
 import { Header } from "../atoms/Header";
-import { EarthCanvas } from "../canvas";
+
+const EarthCanvas = lazy(() => import("../canvas/Earth"));
 
 const ACCESS_KEY = "ae621c74-bd89-4aab-83d3-69dc39a166ce";
 
-const Contact = () => {
+interface ContactProps {
+  isMobile: boolean;
+}
+
+const Contact = ({ isMobile }: ContactProps) => {
   const { t, language } = useLanguage();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [loading, setLoading] = useState(false);
@@ -61,11 +66,11 @@ const Contact = () => {
 
   return (
     <div
-      className={`flex flex-col-reverse gap-10 overflow-hidden xl:mt-12 xl:flex-row`}
+      className={`flex flex-col-reverse gap-10 overflow-hidden xl:mt-12 xl:flex-row ${isMobile ? "pb-12" : ""}`}
     >
       <motion.div
         variants={slideIn("left", "tween", 0.2, 1)}
-        className="bg-black-100 flex-[0.75] rounded-2xl p-8 relative"
+        className="bg-black-100 flex-[0.75] rounded-2xl p-6 sm:p-8 relative"
       >
         <AnimatePresence>
           {showSuccess && (
@@ -73,11 +78,11 @@ const Contact = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-4 right-4 z-10 bg-green-500/20 border border-green-500/50 rounded-lg px-4 py-3 flex items-center gap-3"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-green-500/20 border border-green-500/50 rounded-lg px-3 py-2 sm:px-4 sm:py-3 flex items-center gap-2 sm:gap-3"
             >
-              <div className="bg-green-500 rounded-full p-1">
+              <div className="bg-green-500 rounded-full p-0.5 sm:p-1">
                 <svg
-                  className="w-4 h-4 text-white"
+                  className="w-3 h-3 sm:w-4 sm:h-4 text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -90,7 +95,7 @@ const Contact = () => {
                   />
                 </svg>
               </div>
-              <span className="text-green-400 text-sm font-medium">
+              <span className="text-green-400 text-xs sm:text-sm font-medium">
                 {language === "en" ? "Message sent!" : "¡Mensaje enviado!"}
               </span>
             </motion.div>
@@ -99,9 +104,12 @@ const Contact = () => {
 
         <Header useMotion={false} p={t.contact.p} h2={t.contact.h2} />
 
-        <form onSubmit={handleSubmit} className="mt-12 flex flex-col gap-8">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 sm:mt-12 flex flex-col gap-4 sm:gap-8"
+        >
           <label className="flex flex-col">
-            <span className="mb-4 font-medium text-white">
+            <span className="mb-2 sm:mb-4 font-medium text-white text-sm sm:text-base">
               {t.contact.form.name.span}
             </span>
             <input
@@ -111,11 +119,11 @@ const Contact = () => {
               onChange={handleChange}
               placeholder={t.contact.form.name.placeholder}
               required
-              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
+              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-4 py-3 sm:px-6 sm:py-4 font-medium text-white text-sm sm:text-base outline-none"
             />
           </label>
           <label className="flex flex-col">
-            <span className="mb-4 font-medium text-white">
+            <span className="mb-2 sm:mb-4 font-medium text-white text-sm sm:text-base">
               {t.contact.form.email.span}
             </span>
             <input
@@ -125,11 +133,11 @@ const Contact = () => {
               onChange={handleChange}
               placeholder={t.contact.form.email.placeholder}
               required
-              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
+              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-4 py-3 sm:px-6 sm:py-4 font-medium text-white text-sm sm:text-base outline-none"
             />
           </label>
           <label className="flex flex-col">
-            <span className="mb-4 font-medium text-white">
+            <span className="mb-2 sm:mb-4 font-medium text-white text-sm sm:text-base">
               {t.contact.form.message.span}
             </span>
             <textarea
@@ -138,17 +146,20 @@ const Contact = () => {
               onChange={handleChange}
               placeholder={t.contact.form.message.placeholder}
               required
-              rows={7}
-              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-6 py-4 font-medium text-white outline-none"
+              rows={5}
+              className="bg-tertiary placeholder:text-secondary rounded-lg border-none px-4 py-3 sm:px-6 sm:py-4 font-medium text-white text-sm sm:text-base outline-none"
             />
           </label>
           <button
             type="submit"
             disabled={loading}
-            className="bg-tertiary shadow-primary w-fit rounded-xl px-8 py-3 font-bold text-white shadow-md outline-none disabled:opacity-50 flex items-center gap-2"
+            className="bg-tertiary shadow-primary w-fit rounded-xl px-6 py-2 sm:px-8 sm:py-3 font-bold text-white text-sm sm:text-base shadow-md outline-none disabled:opacity-50 flex items-center gap-2 self-center sm:self-start"
           >
             {loading && (
-              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+              <svg
+                className="animate-spin h-4 w-4 sm:h-5 sm:w-5"
+                viewBox="0 0 24 24"
+              >
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -178,9 +189,13 @@ const Contact = () => {
 
       <motion.div
         variants={slideIn("right", "tween", 0.2, 1)}
-        className="h-[350px] md:h-[550px] xl:h-auto xl:flex-1"
+        className={`h-[350px] md:h-[550px] xl:h-auto xl:flex-1 ${isMobile ? "hidden" : ""}`}
       >
-        <EarthCanvas />
+        {!isMobile && (
+          <Suspense fallback={null}>
+            <EarthCanvas />
+          </Suspense>
+        )}
       </motion.div>
     </div>
   );

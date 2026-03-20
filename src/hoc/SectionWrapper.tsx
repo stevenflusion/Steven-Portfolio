@@ -3,15 +3,15 @@ import { motion } from "framer-motion";
 import { styles } from "../constants/styles";
 
 interface Props {
-  Component: React.ElementType;
+  Component: React.ElementType<any>;
   idName: string;
 }
 
 const SectionWrapper = (
   Component: Props["Component"],
-  idName: Props["idName"]
+  idName: Props["idName"],
 ) =>
-  function HOC() {
+  function HOC(props: any) {
     return (
       <motion.section
         initial="hidden"
@@ -22,7 +22,7 @@ const SectionWrapper = (
       >
         <span className="hash-span">&nbsp;</span>
 
-        <Component />
+        <Component {...props} />
       </motion.section>
     );
   };
